@@ -75,6 +75,14 @@ resource "aws_security_group" "web" {
     cidr_blocks = [var.my_ip_cidr]
   }
 
+  ingress {
+    description = "SSH desde EC2 Instance Connect (consola web AWS, us-east-1)"
+    from_port   = 22
+    to_port     = 22
+    protocol    = "tcp"
+    cidr_blocks = ["18.206.107.24/29"]
+  }
+
   egress {
     description = "Todo el trafico de salida"
     from_port   = 0
