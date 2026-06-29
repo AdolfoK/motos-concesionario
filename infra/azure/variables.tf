@@ -5,9 +5,15 @@ variable "project_name" {
 }
 
 variable "location" {
-  description = "Region de Azure (colindante con us-east-1 de AWS)."
+  description = "Region de Azure para el grupo de recursos y el almacenamiento."
   type        = string
   default     = "eastus"
+}
+
+variable "pg_location" {
+  description = "Region para PostgreSQL. Las suscripciones de estudiante restringen muchas regiones; brazilsouth funciona y queda cerca de Chile."
+  type        = string
+  default     = "brazilsouth"
 }
 
 variable "db_admin_user" {

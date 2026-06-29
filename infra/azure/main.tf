@@ -19,9 +19,9 @@ resource "azurerm_resource_group" "rg" {
 
 # --- PostgreSQL Flexible Server ----------------------------------------------
 resource "azurerm_postgresql_flexible_server" "pg" {
-  name                = "${var.project_name}-pg-${random_string.sufijo.result}"
+  name                = "${var.project_name}-pg-${var.pg_location}-${random_string.sufijo.result}"
   resource_group_name = azurerm_resource_group.rg.name
-  location            = azurerm_resource_group.rg.location
+  location            = var.pg_location
 
   version                = "16"
   administrator_login    = var.db_admin_user
