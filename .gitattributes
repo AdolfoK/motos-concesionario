@@ -1,0 +1,9 @@
+# Normaliza finales de linea. Los scripts y archivos del contenedor Linux
+# DEBEN ir con LF, o fallarian dentro de la imagen (ej: "#!/bin/sh\r").
+* text=auto eol=lf
+*.ps1 text eol=crlf
+
+# Binarios: sin conversion.
+*.png binary
+*.jpg binary
+*.pdf binary

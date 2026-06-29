@@ -1,0 +1,55 @@
+# Orquestacion local de la plataforma de la concesionaria.
+# Reproduce la arquitectura del documento en un entorno de desarrollo:
+#   - db        -> PostgreSQL (en produccion: Azure Database for PostgreSQL)
+#   - backend   -> Django REST (imagen python:3.10-slim)
+#   - frontend  -> React build servido por nginx (node:20-alpine -> nginx:1.25-alpine)
+
+services:
+  db:
+    image: postgres:16-alpine
+    container_name: concesionaria-db
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-concesionaria}
+      POSTGRES_USER: ${POSTGRES_USER:-concesionaria}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-concesionaria}
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-concesionaria}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  backend:
+    build: ./backend
+    container_name: concesionaria-backend
+    environment:
+      DJANGO_DEBUG: ${DJANGO_DEBUG:-True}
+      DJANGO_SECRET_KEY: ${DJANGO_SECRET_KEY:-dev-insecure-key-cambiar-en-produccion}
+      POSTGRES_DB: ${POSTGRES_DB:-concesionaria}
+      POSTGRES_USER: ${POSTGRES_USER:-concesionaria}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-concesionaria}
+      POSTGRES_HOST: db
+      POSTGRES_PORT: 5432
+      WHATSAPP_NUMERO: ${WHATSAPP_NUMERO:-56912345678}
+      DJANGO_ADMIN_USER: ${DJANGO_ADMIN_USER:-admin}
+      DJANGO_ADMIN_PASSWORD: ${DJANGO_ADMIN_PASSWORD:-admin123}
+    volumes:
+      - media_data:/app/media
+    depends_on:
+      db:
+        condition: service_healthy
+    ports:
+      - "8000:8000"
+
+  frontend:
+    build: ./frontend
+    container_name: concesionaria-frontend
+    depends_on:
+      - backend
+    ports:
+      - "8080:80"
+
+volumes:
+  db_data:
+  media_data:
