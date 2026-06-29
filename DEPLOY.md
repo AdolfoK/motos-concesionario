@@ -92,6 +92,11 @@ Get-Content "$env:USERPROFILE\.ssh\id_rsa.pub"
    - Guarda el **Access key ID** y el **Secret access key** (solo se muestran
      una vez).
 
+   > ⚠️ **Importante:** el usuario IAM **debe** tener la política
+   > **AdministratorAccess** adjunta, o Terraform fallará con
+   > `UnauthorizedOperation`. Verifícalo en *Permissions* → *Add permissions*
+   > → *Attach policies directly* → `AdministratorAccess`.
+
 ---
 
 ## Paso 3 — Autenticar las CLIs
@@ -144,6 +149,18 @@ terraform apply
 Tarda ~5-10 min (PostgreSQL gestionado demora). Al terminar verás los outputs
 (`pg_fqdn`, `storage_account_name`, etc.). **No borres la carpeta**: el estado
 (`terraform.tfstate`) lo lee la capa de AWS.
+
+> ⚠️ **Regiones restringidas en Azure for Students.** Las suscripciones de
+> estudiante limitan las regiones por política y, además, PostgreSQL está
+> *offer-restricted* en varias (ej: `eastus`, `eastus2` fallan con
+> `LocationIsOfferRestricted`). Por eso el PostgreSQL se despliega por defecto
+> en **`brazilsouth`** (`var.pg_location`), permitida y cercana a Chile.
+> Para ver QUÉ regiones permite tu suscripción:
+> ```powershell
+> az policy assignment list --query "[].parameters" -o json
+> ```
+> Busca `listOfAllowedLocations`. Si `brazilsouth` no estuviera, cambia
+> `pg_location` a una de las permitidas (ej: `chilecentral`, `mexicocentral`).
 
 > 🔐 Anota la `db_admin_password` que usaste: la necesitas idéntica en AWS.
 
