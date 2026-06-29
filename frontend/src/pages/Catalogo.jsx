@@ -23,13 +23,35 @@ export default function Catalogo() {
       .finally(() => setCargando(false));
   }, []);
 
-  if (cargando) return <p>Cargando catálogo...</p>;
-  if (error) return <p className="error">{error}</p>;
-
   return (
     <section>
-      <h1>Catálogo de motos</h1>
-      {motos.length === 0 && <p>No hay motos disponibles por el momento.</p>}
+      <div className="hero">
+        <div className="hero-content">
+          <p className="hero-kicker">MotoStore</p>
+          <h1 className="hero-title">
+            Excelencia sobre <span className="acento">dos ruedas</span>
+          </h1>
+          <p className="hero-sub">
+            Descubre nuestra selección premium de motocicletas y agenda tu hora
+            de servicio técnico en minutos, directo por WhatsApp.
+          </p>
+          <a className="btn" href="#catalogo">
+            Ver catálogo
+          </a>
+        </div>
+      </div>
+
+      <h2 id="catalogo" className="seccion-titulo">
+        Catálogo
+      </h2>
+      <hr className="seccion-linea" />
+
+      {cargando && <p className="cargando">Cargando catálogo...</p>}
+      {error && <p className="error">{error}</p>}
+      {!cargando && !error && motos.length === 0 && (
+        <p className="cargando">No hay motos disponibles por el momento.</p>
+      )}
+
       <div className="grid">
         {motos.map((moto) => (
           <article key={moto.id} className="card">
