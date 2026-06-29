@@ -1,0 +1,23 @@
+# Copia este archivo a terraform.tfvars y completa los valores.
+# terraform.tfvars NUNCA se sube a git (contiene secretos).
+
+# Tu clave PUBLICA SSH (contenido de ~/.ssh/id_rsa.pub).
+ssh_public_key = "ssh-rsa AAAAB3Nza... tu_correo@ejemplo.com"
+
+# Tu IP publica en formato CIDR, para limitar el acceso SSH.
+# Obten tu IP en https://ifconfig.me  ->  ejemplo: 190.95.1.2/32
+my_ip_cidr = "TU.IP.PUBLICA.AQUI/32"
+
+# La MISMA contrasena de PostgreSQL que pusiste en infra/azure/terraform.tfvars.
+db_admin_password = "CambiaEstaClave_123"
+
+# Clave secreta de Django (genera una larga y aleatoria).
+django_secret_key = "pon-aqui-una-clave-larga-y-aleatoria-de-50-caracteres"
+
+# Numero de WhatsApp de la concesionaria (sin + ni espacios).
+whatsapp_numero = "56912345678"
+
+# Opcionales:
+# instance_type         = "t3.micro"
+# repo_url              = "https://github.com/AdolfoK/motos-concesionario.git"
+# django_admin_password = "admin123"

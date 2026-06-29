@@ -13,9 +13,14 @@ db = os.environ.get("POSTGRES_DB", "concesionaria")
 user = os.environ.get("POSTGRES_USER", "concesionaria")
 pwd = os.environ.get("POSTGRES_PASSWORD", "concesionaria")
 
+sslmode = os.environ.get("POSTGRES_SSLMODE", "")
+conn_kwargs = dict(host=host, port=port, dbname=db, user=user, password=pwd)
+if sslmode:
+    conn_kwargs["sslmode"] = sslmode
+
 for intento in range(1, 31):
     try:
-        psycopg2.connect(host=host, port=port, dbname=db, user=user, password=pwd).close()
+        psycopg2.connect(**conn_kwargs).close()
         print("PostgreSQL disponible.")
         break
     except Exception as exc:  # noqa: BLE001

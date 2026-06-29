@@ -1,0 +1,12 @@
+# Copia este archivo a terraform.tfvars y completa los valores.
+# terraform.tfvars NUNCA se sube a git (contiene secretos).
+
+# Contrasena del administrador de PostgreSQL.
+# Requisitos: 8-128 caracteres, con mayusculas, minusculas y numeros.
+# IMPORTANTE: usa exactamente la MISMA en infra/aws/terraform.tfvars.
+db_admin_password = "CambiaEstaClave_123"
+
+# Opcionales (descomenta para cambiar):
+# location      = "eastus"
+# db_admin_user = "pgadmin"
+# db_name       = "concesionaria"

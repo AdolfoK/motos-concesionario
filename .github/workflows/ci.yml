@@ -1,0 +1,60 @@
+name: CI - Build & Security Scan (DevSecOps)
+
+# Pipeline de Integracion Continua con escaneo de seguridad "Shift-Left"
+# usando Aqua Trivy, tal como describe el documento.
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main]
+
+jobs:
+  build-and-scan:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        include:
+          - name: backend
+            context: ./backend
+          - name: frontend
+            context: ./frontend
+
+    steps:
+      - name: Checkout del codigo
+        uses: actions/checkout@v4
+
+      - name: Construir imagen Docker (${{ matrix.name }})
+        run: docker build -t concesionaria-${{ matrix.name }}:ci ${{ matrix.context }}
+
+      - name: Escaneo de vulnerabilidades con Trivy (${{ matrix.name }})
+        uses: aquasecurity/trivy-action@0.24.0
+        with:
+          image-ref: concesionaria-${{ matrix.name }}:ci
+          format: table
+          # Falla el pipeline si hay vulnerabilidades CRITICAS (bloqueo de despliegue).
+          exit-code: "1"
+          ignore-unfixed: true
+          severity: CRITICAL
+
+  tests:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout del codigo
+        uses: actions/checkout@v4
+
+      - name: Configurar Python 3.10
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.10"
+
+      - name: Instalar dependencias del backend
+        working-directory: ./backend
+        run: pip install -r requirements.txt
+
+      - name: Ejecutar chequeos de Django
+        working-directory: ./backend
+        env:
+          DJANGO_SECRET_KEY: ci-test-key
+          # Sin POSTGRES_* usa los valores por defecto; check no requiere DB real.
+        run: python manage.py check

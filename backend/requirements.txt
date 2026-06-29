@@ -8,3 +8,6 @@ psycopg2-binary==2.9.9
 Pillow==10.4.0
 gunicorn==22.0.0
 python-dotenv==1.0.1
+# Almacenamiento de imagenes en Azure Blob Storage (produccion).
+django-storages==1.14.4
+azure-storage-blob==12.23.1

@@ -91,6 +91,12 @@ DATABASES = {
     }
 }
 
+# Azure Database for PostgreSQL exige conexiones SSL. Se activa con
+# POSTGRES_SSLMODE=require (en local, sin definir, queda deshabilitado).
+_pg_sslmode = os.environ.get("POSTGRES_SSLMODE", "")
+if _pg_sslmode:
+    DATABASES["default"]["OPTIONS"] = {"sslmode": _pg_sslmode}
+
 AUTH_PASSWORD_VALIDATORS = [
     {"NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator"},
     {"NAME": "django.contrib.auth.password_validation.MinimumLengthValidator"},
@@ -112,6 +118,30 @@ STATIC_ROOT = BASE_DIR / "staticfiles"
 # En local se sirven desde el sistema de archivos (MEDIA_ROOT).
 MEDIA_URL = "media/"
 MEDIA_ROOT = BASE_DIR / "media"
+
+# --- Almacenamiento de archivos (media) -------------------------------------
+# Si se definen las credenciales de Azure Blob Storage, las imagenes de motos
+# se suben alli (como exige el documento). Si no, se usa el disco local.
+AZURE_STORAGE_ACCOUNT = os.environ.get("AZURE_STORAGE_ACCOUNT", "")
+AZURE_STORAGE_KEY = os.environ.get("AZURE_STORAGE_KEY", "")
+AZURE_STORAGE_CONTAINER = os.environ.get("AZURE_STORAGE_CONTAINER", "media")
+
+if AZURE_STORAGE_ACCOUNT and AZURE_STORAGE_KEY:
+    STORAGES = {
+        "default": {
+            "BACKEND": "storages.backends.azure_storage.AzureStorage",
+            "OPTIONS": {
+                "account_name": AZURE_STORAGE_ACCOUNT,
+                "account_key": AZURE_STORAGE_KEY,
+                "azure_container": AZURE_STORAGE_CONTAINER,
+                # URL publica directa al blob (contenedor con acceso de lectura).
+                "expiration_secs": None,
+            },
+        },
+        "staticfiles": {
+            "BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage",
+        },
+    }
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
